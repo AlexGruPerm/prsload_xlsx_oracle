@@ -160,7 +160,7 @@ object DBSaver {
     conn.commit()
   }
 
-  def saveTaskCode(seq :Seq[TaskCode])(implicit conn :Connection) ={
+  def saveTaskCode(seq :Seq[TaskCode])(implicit conn :Connection) = {
     val insertSql =
       """
         |insert into task_code(filename,np_name,code,s_name,percent_impact,fp_id,targetIndicId,taskId)
@@ -178,6 +178,55 @@ object DBSaver {
         preparedStmt.setString (6, r.fp_id)
         preparedStmt.setString (7, r.targetIndicId)
         preparedStmt.setString (8, r.taskId)
+        preparedStmt.execute
+    }
+    preparedStmt.close()
+    conn.commit()
+  }
+
+  def saveFinProvis(seq :Seq[FinancialProvision])(implicit conn :Connection) = {
+    val insertSql =
+      """
+        |insert into financial_provision(FILENAME,NP_NAME,FP_CODE,FP_NAME,KBK,PROJECT_NP,S_NAME,GRBS_CODE,GRBS_NAME,
+        |NATP_NAME,VR_NAME,CS_ID,
+        |BUDGET_ASSIGN_2019,APPROVED_LBO_2019,LOCKED_ELBO_2019,BROUGHT_PNO_2019,PNO_WCONDITIONS_2019,
+        |BUDGET_ASSIGN_2020,APPROVED_LBO_2020,LOCKED_ELBO_2020,BROUGHT_PNO_2020,PNO_WCONDITIONS_2020,
+        |BUDGET_ASSIGN_2021,APPROVED_LBO_2021,LOCKED_ELBO_2021,BROUGHT_PNO_2021,PNO_WCONDITIONS_2021,
+        |SBT_ROW_TYPE)
+        |values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"""
+        .stripMargin
+
+    val preparedStmt: PreparedStatement = conn.prepareStatement(insertSql)
+    seq.foreach{
+      r =>
+        preparedStmt.setString(1, r.filename)
+        preparedStmt.setString(2, r.np_name)
+        preparedStmt.setString(3, r.fp_code)
+        preparedStmt.setString(4, r.fp_name)
+        preparedStmt.setString(5, r.kbk)
+        preparedStmt.setString(6, r.project_np)
+        preparedStmt.setString(7, r.s_name)
+        preparedStmt.setString(8, r.grbs_code)
+        preparedStmt.setString(9, r.grbs_name)
+        preparedStmt.setString(10, r.natp_name)
+        preparedStmt.setString(11, r.vr_name)
+        preparedStmt.setString(12, r.cs_id)
+        preparedStmt.setString(13, r.budget_assign_2019)
+        preparedStmt.setString(14, r.approved_lbo_2019)
+        preparedStmt.setString(15, r.locked_elbo_2019)
+        preparedStmt.setString(16, r.brought_pno_2019)
+        preparedStmt.setString(17, r.pno_wconditions_2019)
+        preparedStmt.setString(18, r.budget_assign_2020)
+        preparedStmt.setString(19, r.approved_lbo_2020)
+        preparedStmt.setString(20, r.locked_elbo_2020)
+        preparedStmt.setString(21, r.brought_pno_2020)
+        preparedStmt.setString(22, r.pno_wconditions_2020)
+        preparedStmt.setString(23, r.budget_assign_2021)
+        preparedStmt.setString(24, r.approved_lbo_2021)
+        preparedStmt.setString(25, r.locked_elbo_2021)
+        preparedStmt.setString(26, r.brought_pno_2021)
+        preparedStmt.setString(27, r.pno_wconditions_2021)
+        preparedStmt.setString(28, r.sbt_row_type)
         preparedStmt.execute
     }
     preparedStmt.close()

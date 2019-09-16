@@ -3,14 +3,27 @@ package loader
 import org.apache.poi.ss.usermodel.{Cell, CellType, Row}
 
 /**
+ *
+*/
+sealed trait CommCCTrait {
+  def getFileName :String
+}
+
+/**
  * Case class for data from file like "Z-X.Y. Соисполнители.xlsx"
 */
 case class CoExecutor(filename :String, np_name:String, code :String, name :String, budget_stages_cycle :String)
+  extends CommCCTrait {
+  override def getFileName = filename
+}
 
 /**
  * Case class for data from file like "Z-X.Y. Заинтересованные ФОИВ.xlsx"
 */
 case class InterestedFoiv(filename :String, np_name:String, id_project_version :String, code :String, name :String)
+  extends CommCCTrait {
+  override def getFileName = filename
+}
 
 /**
  * Case class for data from file like "X-Y. Цели и показатели.xlsx"
@@ -52,11 +65,13 @@ case class TargetIndic(filename :String, np_name:String,
                        decree: String, //Указ
                        num: String, //Индекс номера
                        is_using_in_fp: String //Используется в ФП
-) {
+) extends CommCCTrait {
   override def toString: String =
     "["+filename+"] "+" "+  npp +" "+  code +" "+  noDopInidc  +" "+ project_vers  +" "+  npp_useless +" "+  ti_type+
      /* " "+ indic_name +" "+ measure*/ " "+veha_indic+" ["+ base_value + "] "+  date_calc +" "+val_2018+" val_22="+val_2022+" "+
       ident+" - "+is_using_in_fp
+
+    override def getFileName = filename
 }
 
 /**
@@ -72,7 +87,10 @@ case class ProjStruct(filename :String, np_name:String,
                       stages :String,
                       begin_impl_date :String,
                       end_impl_date :String,
-                      is_related_np_taks :String);
+                      is_related_np_taks :String)
+  extends CommCCTrait {
+  override def getFileName = filename
+}
 
 /**
  * Case class for data from file like "X-Y. Цели и показатели-Код Z.xlsx"
@@ -89,6 +107,9 @@ case class TargetIndicCode(filename :String, np_name:String,
                            val_2023: String,
                            val_2024: String,
                            targetIndicId: String)
+  extends CommCCTrait {
+  override def getFileName = filename
+}
 
 /**
  * Case class for data from file like "X-Y. Задачи-Код Z.xlsx"
@@ -101,6 +122,9 @@ case class TaskCode(filename :String, np_name:String,
                     targetIndicId :String,
                     taskId :String
                    )
+  extends CommCCTrait {
+  override def getFileName = filename
+}
 
 /**
  * Case class for data from file like  X. Финансовое обеспечение-ФБ.xlsx
@@ -135,23 +159,29 @@ case class FinancialProvision(filename :String, np_name:String,
                               brought_pno_2021 :String,
                               pno_wconditions_2021 :String,
                               sbt_row_type :String)
-
-
-
-
-
-
+  extends CommCCTrait {
+  override def getFileName = filename
+}
 
 
 
 object CommonCCStructs {
 
   private implicit def getCellasStr(c :Cell): String  =
-  c.getCellTypeEnum match {
-    case CellType.STRING => c.getStringCellValue
-    case CellType.NUMERIC => c.getNumericCellValue.toString
-    case CellType.BLANK => " "//null
-  }
+    try {
+      c.getCellTypeEnum match {
+        case CellType.STRING => c.getStringCellValue
+        case CellType.NUMERIC => c.getNumericCellValue.toString
+        case CellType.BOOLEAN => " " //c.getBooleanCellValue.toString
+        case CellType.BLANK => " " //null
+      }
+    } catch {
+      //todo: rewrite with logical OR
+      case e: Throwable => throw new CustomException(msg = s"EXCEPTION [getCellasStr] getCellTypeEnum = " + c.getCellTypeEnum)
+      case e :NullPointerException =>  throw new CustomException(msg = s"EXCEPTION [getCellasStr] getCellTypeEnum = " + c.getCellTypeEnum)
+    }
+
+
 
   /**
    * Parse XLSX row of Data into InterestedFoiv
@@ -164,8 +194,7 @@ object CommonCCStructs {
      *  Here we use implicit conversion from Cell Type of different CellType.X into String with  - getCellasStr
     */
     TargetIndic(
-      filename,
-      np_name,
+      filename, np_name,
       row.getCell(0),
       row.getCell(1),
       row.getCell(2),
@@ -206,8 +235,7 @@ object CommonCCStructs {
 
   private def cellToProjStruct(filename: String, np_name: String, row: Row): ProjStruct =
     ProjStruct(
-      filename,
-      np_name,
+      filename, np_name,
       row.getCell(0),
       row.getCell(1),
       row.getCell(2),
@@ -222,8 +250,7 @@ object CommonCCStructs {
 
   private def cellToTargetIndicCode(filename: String, np_name: String, row: Row): TargetIndicCode =
     TargetIndicCode(
-      filename,
-      np_name,
+      filename, np_name,
       row.getCell(0),
       row.getCell(1),
       row.getCell(2),
@@ -239,8 +266,7 @@ object CommonCCStructs {
 
   private def cellToTaskCode(filename: String, np_name: String, row: Row) :TaskCode =
     TaskCode(
-      filename,
-      np_name,
+      filename, np_name,
       row.getCell(0),
       row.getCell(1),
       row.getCell(2),
@@ -249,14 +275,57 @@ object CommonCCStructs {
       row.getCell(5)
     )
 
+  private def cellToFinProvis(filename: String, np_name: String, row: Row) :FinancialProvision = //{
+    try {
+      FinancialProvision(
+        filename, np_name,
+        row.getCell(0),
+        row.getCell(1),
+        row.getCell(2),
+        row.getCell(3),
+        row.getCell(4),
+        row.getCell(5),
+        row.getCell(6),
+        row.getCell(7),
+        row.getCell(8),
+        row.getCell(9), //Целевые статьи
+        //2019
+        row.getCell(10),
+        row.getCell(11),
+        row.getCell(12),
+        row.getCell(13),
+        row.getCell(14),
+        //2020
+        row.getCell(15),
+        row.getCell(16),
+        row.getCell(17),
+        row.getCell(18),
+        row.getCell(19),
+        //2021
+        row.getCell(20),
+        row.getCell(21),
+        row.getCell(22),
+        row.getCell(23),
+        row.getCell(24),
+        //
+        row.getCell(25) //Тип строки СБР
+      )
+    } catch {
+      //todo: rewrite with logical OR
+      case e: Throwable => throw
+        new CustomException(msg = s"EXCEPTION [cellToFinProvis] RowNum = ${row.getRowNum} c11=${row.getCell(11)} c12=${row.getCell(12)} c13=${row.getCell(13)}")
+      case e: NullPointerException => throw new CustomException(msg = s"EXCEPTION [cellToFinProvis] getRowNum = " + row.getRowNum)
+    }
+
+
+
   /**
    * Parse XLSX row of Data into Seq of case class
    * Ex: getCell(0,MissingCellPolicy.RETURN_BLANK_AS_NULL)
   */
   private def cellToCoExecutor(filename :String, np_name:String, row: Row): CoExecutor =
     CoExecutor(
-      filename,
-      np_name,
+      filename, np_name,
       row.getCell(0).getStringCellValue,
       row.getCell(1).getStringCellValue,
       row.getCell(2).getStringCellValue
@@ -266,13 +335,13 @@ object CommonCCStructs {
    * Parse XLSX row of Data into Seq of case class
    */
   private def cellToInteresFoiv(filename :String, np_name :String, row: Row): InterestedFoiv =
-    InterestedFoiv(
-      filename,
-      np_name,
-      row.getCell(0).getStringCellValue,
-      row.getCell(1).getStringCellValue,
-      row.getCell(2).getStringCellValue
-    )
+      InterestedFoiv(
+        filename,
+        np_name,
+        row.getCell(0).getStringCellValue,
+        row.getCell(1).getStringCellValue,
+        row.getCell(2).getStringCellValue
+      )
 
   /**
    * Move row pointer from top of File. To separate header rows from data rows.
@@ -316,6 +385,11 @@ object CommonCCStructs {
   def rowsToSeqTaskCode(filename :String, np_name:String, rowIter :Iterator[Row]) :Seq[TaskCode] = {
     movePointer(rowIter,1)
     rowIter.map(r => cellToTaskCode(filename,np_name,r)).toSeq
+  }
+
+  def rowsToSeqFinProvis(filename :String, np_name:String, rowIter :Iterator[Row]) :Seq[FinancialProvision] = {
+    movePointer(rowIter,2)
+    rowIter.map(r => cellToFinProvis(filename,np_name,r)).toSeq
   }
 
 

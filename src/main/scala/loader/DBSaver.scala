@@ -233,4 +233,200 @@ object DBSaver {
     conn.commit()
   }
 
+
+  def saveMethodCalc(seq :Seq[MethodCalc])(implicit conn :Connection) = {
+    val insertSql =
+      """ insert into method_calc(filename,np_name,code,name_basic_indic,measure,methodcalc,agr_level_1,agr_level_2,asses_period,provision_date,methodcalc_id,descr)
+        | values(?,?,?,?,?,?,?,?,?,?,?,?) """
+        .stripMargin
+
+    val preparedStmt: PreparedStatement = conn.prepareStatement(insertSql)
+    seq.foreach{
+      r =>
+        preparedStmt.setString(1, r.filename)
+        preparedStmt.setString(2, r.np_name)
+        preparedStmt.setString(3, r.code)
+        preparedStmt.setString(4, r.name_basic_indic)
+        preparedStmt.setString(5, r.measure)
+        preparedStmt.setString(6, r.methodcalc)
+        preparedStmt.setString(7, r.agr_level_1)
+        preparedStmt.setString(8, r.agr_level_2)
+        preparedStmt.setString(9, r.asses_period)
+        preparedStmt.setString(10, r.provision_date)
+        preparedStmt.setString(11, r.methodcalc_id)
+        preparedStmt.setString(12, r.descr)
+        preparedStmt.execute
+    }
+    preparedStmt.close()
+    conn.commit()
+  }
+
+
+  def saveMethodCalcCode(seq :Seq[MethodCalcCode])(implicit conn :Connection) = {
+    val insertSql =
+      """ insert into method_calc_code(filename,np_name,method,method_code,method_name,measure,data_source,source_respons,agr_level,asses_period,provision_date,var_description)
+        | values(?,?,?,?,?,?,?,?,?,?,?,?) """
+        .stripMargin
+
+    val preparedStmt: PreparedStatement = conn.prepareStatement(insertSql)
+    seq.foreach{
+      r =>
+        preparedStmt.setString(1, r.filename)
+        preparedStmt.setString(2, r.np_name)
+        preparedStmt.setString(3, r.method)
+        preparedStmt.setString(4, r.method_code)
+        preparedStmt.setString(5, r.method_name)
+        preparedStmt.setString(6, r.measure)
+        preparedStmt.setString(7, r.data_source)
+        preparedStmt.setString(8, r.source_respons)
+        preparedStmt.setString(9, r.agr_level)
+        preparedStmt.setString(10, r.asses_period)
+        preparedStmt.setString(11, r.provision_date)
+        preparedStmt.setString(12, r.var_description)
+
+        preparedStmt.execute
+    }
+    preparedStmt.close()
+    conn.commit()
+  }
+
+  def saveTasks(seq :Seq[Tasks])(implicit conn :Connection) = {
+    val insertSql =
+      """ insert into tasks(FILENAME,NP_NAME,NPP,CODE,PRJ_VERS,PRJ_NAME,TASK_NAME,RESPONS,IMPL_PERIOD,FP_NAME,DECREE,CODE_NAME)
+        | values(?,?,?,?,?,?,?,?,?,?,?,?) """
+        .stripMargin
+
+    val preparedStmt: PreparedStatement = conn.prepareStatement(insertSql)
+    seq.foreach{
+      r =>
+        preparedStmt.setString(1, r.filename)
+        preparedStmt.setString(2, r.np_name)
+        preparedStmt.setString(3, r.npp)
+        preparedStmt.setString(4, r.code)
+        preparedStmt.setString(5, r.prj_vers)
+        preparedStmt.setString(6, r.prj_name)
+        preparedStmt.setString(7, r.task_name)
+        preparedStmt.setString(8, r.respons)
+        preparedStmt.setString(9, r.impl_period)
+        preparedStmt.setString(10, r.fp_name)
+        preparedStmt.setString(11, r.decree)
+        preparedStmt.setString(12, r.code_name)
+        preparedStmt.execute
+    }
+    preparedStmt.close()
+    conn.commit()
+  }
+
+  def saveGovernment(seq :Seq[Government])(implicit conn :Connection) = {
+    val insertSql =
+      """ insert into government(FILENAME,NP_NAME,PARTICIPANT,LOGIN,POSITION,ORG1,ORG2,ROLE_IN_TEAM,GROUP_OF_ROLES,BASIS,PERIOD_PARTIC_FROM,PERIOD_PARTIC_TO,PRJ_ID,USER_ID,ROLE_IN_TEAM_ID,ROLE_IN_TEAM_PRIOR,ROLE_IN_TEAM_SYSCODE,USER_FIO_POSIT,ID,PERCENT_PARTIC)
+        | values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) """
+        .stripMargin
+
+    val preparedStmt: PreparedStatement = conn.prepareStatement(insertSql)
+    seq.foreach{
+      r =>
+        preparedStmt.setString(1, r.filename)
+        preparedStmt.setString(2, r.np_name)
+        preparedStmt.setString(3, r.participant)
+        preparedStmt.setString(4, r.login)
+        preparedStmt.setString(5, r.position)
+        preparedStmt.setString(6, r.org1)
+        preparedStmt.setString(7, r.org2)
+        preparedStmt.setString(8, r.role_in_team)
+        preparedStmt.setString(9, r.group_of_roles)
+        preparedStmt.setString(10, r.basis)
+        preparedStmt.setString(11, r.period_partic_from)
+        preparedStmt.setString(12, r.period_partic_to)
+        preparedStmt.setString(13, r.prj_id)
+        preparedStmt.setString(14, r.user_id)
+        preparedStmt.setString(15, r.role_in_team_id)
+        preparedStmt.setString(16, r.role_in_team_prior)
+        preparedStmt.setString(17, r.role_in_team_syscode)
+        preparedStmt.setString(18, r.user_fio_posit)
+        preparedStmt.setString(19, r.id)
+        preparedStmt.setString(20, r.percent_partic)
+        preparedStmt.execute
+    }
+    preparedStmt.close()
+    conn.commit()
+  }
+
+  def saveResults(seq :Seq[Results])(implicit conn :Connection) = {
+    val insertSql =
+      """   insert into results(FILENAME,NP_NAME,FP_NAME,TASK_OF_NP,CODE,S_NAME,RESULT_TYPE,MEASURE,RESPONS,CONTROL_LEVEL,VALUE,ACHIEV_DATE,TASK_VERS_PROJ_ID,TASK_ID,IS_MONEY,REALIZE_REGIONS,WITHOUT_FB)
+        |  values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) """
+        .stripMargin
+
+    val preparedStmt: PreparedStatement = conn.prepareStatement(insertSql)
+    seq.foreach{
+      r =>
+        preparedStmt.setString(1, r.filename)
+        preparedStmt.setString(2, r.np_name)
+        preparedStmt.setString(3, r.fp_name)
+        preparedStmt.setString(4, r.task_of_np)
+        preparedStmt.setString(5, r.code)
+        preparedStmt.setString(6, r.s_name)
+        preparedStmt.setString(7, r.result_type)
+        preparedStmt.setString(8, r.measure)
+        preparedStmt.setString(9, r.respons)
+        preparedStmt.setString(10, r.control_level)
+        preparedStmt.setString(11, r.value)
+        preparedStmt.setString(12, r.achiev_date)
+        preparedStmt.setString(13, r.task_vers_proj_id)
+        preparedStmt.setString(14, r.task_id)
+        preparedStmt.setString(15, r.is_money)
+        preparedStmt.setString(16, r.realize_regions)
+        preparedStmt.setString(17, r.without_fb)
+
+        preparedStmt.execute
+    }
+    preparedStmt.close()
+    conn.commit()
+  }
+
+  def saveAdditInfo(seq :Seq[AdditInfo])(implicit conn :Connection) = {
+    val insertSql =
+      """   insert into  add_info(filename,np_name,s_name,npp,section,add_info)
+        |  values(?,?,?,?,?,?) """
+        .stripMargin
+
+    val preparedStmt: PreparedStatement = conn.prepareStatement(insertSql)
+    seq.foreach{
+      r =>
+        preparedStmt.setString(1, r.filename)
+        preparedStmt.setString(2, r.np_name)
+        preparedStmt.setString(3, r.s_name)
+        preparedStmt.setString(4, r.npp)
+        preparedStmt.setString(5, r.section)
+        preparedStmt.setString(6, r.add_info)
+        preparedStmt.execute
+    }
+    preparedStmt.close()
+    conn.commit()
+  }
+
+  def saveAssessmentTaskIndic(seq :Seq[AssessmentTaskIndic])(implicit conn :Connection) = {
+    val insertSql =
+      """ insert into assessment_task_indic(filename,np_name,cell_num,top_header_name,row_num,left_header_name,cell_value)
+        | values(?,?,?,?,?,?,?) """
+        .stripMargin
+
+    val preparedStmt: PreparedStatement = conn.prepareStatement(insertSql)
+    seq.foreach{
+      r =>
+        preparedStmt.setString(1, r.filename)
+        preparedStmt.setString(2, r.np_name)
+        preparedStmt.setInt(3,r.cell_num)
+        preparedStmt.setString(4, r.top_header_name)
+        preparedStmt.setInt(5,r.row_num)
+        preparedStmt.setString(6, r.left_header_name)
+        preparedStmt.setString(7, r.cell_value)
+        preparedStmt.execute
+    }
+    preparedStmt.close()
+    conn.commit()
+  }
+
+
 }

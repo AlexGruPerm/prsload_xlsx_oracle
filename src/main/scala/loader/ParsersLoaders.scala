@@ -40,12 +40,32 @@ class ParsersLoaders(files :Seq[FileNode], conn :Connection) {
 
   private def ParseFinProvis(fn :FileNode) :Seq[FinancialProvision] =
     Function.tupled(rowsToSeqFinProvis _)(fnToParserParams(fn))
-  /*
+  /* :todo DEBUG
   {
     log.info(s"PARENT : ${fn.parentAbsName}  file =  ${fn.fFile}")
     Function.tupled(rowsToSeqFinProvis _)(fnToParserParams(fn))
   }
 */
+  private def ParseMethodCalc(fn :FileNode) :Seq[MethodCalc] =
+    Function.tupled(rowsToSeqMethodCalc _)(fnToParserParams(fn))
+
+  private def ParseMethodCalcCode(fn :FileNode) :Seq[MethodCalcCode] =
+    Function.tupled(rowsToSeqMethodCalcCode _)(fnToParserParams(fn))
+
+  private def ParseTasks(fn :FileNode) :Seq[Tasks] =
+    Function.tupled(rowsToSeqTasks _)(fnToParserParams(fn))
+
+  private def ParseGovernment(fn :FileNode) :Seq[Government] =
+    Function.tupled(rowsToSeqGovernment _)(fnToParserParams(fn))
+
+  private def ParseAdditInfo(fn :FileNode) :Seq[AdditInfo] =
+    Function.tupled(rowsToSeqAdditInfo _)(fnToParserParams(fn))
+
+  private def ParseResults(fn :FileNode) :Seq[Results] =
+    Function.tupled(rowsToSeqResults _)(fnToParserParams(fn))
+
+  private def ParseAssessmentTaskIndic(fn :FileNode) :Seq[AssessmentTaskIndic] =
+    Function.tupled(rowsToSeqAssessmentTaskIndic _)(fnToParserParams(fn))
 
   def parseLoadAll = {
     val t1 = System.currentTimeMillis
@@ -66,18 +86,30 @@ class ParsersLoaders(files :Seq[FileNode], conn :Connection) {
      * and for using common methods like this: seqEntity.head.getFileName
      *
     */
-    case class FileLoadMeta[T <: CommCCTrait](entityName :String, isEnabled :Int = 1,
-                               parseFunc: (FileNode) => Seq[T] ,
-                               saveIntoDbFunc: (Seq[T]) => Unit){
+    case class FileLoadMeta[T <: CommCCTrait](entityName :String,
+                                              isEnabled :Int = 1,
+                                              parseFunc: (FileNode) => Seq[T] ,
+                                              saveIntoDbFunc: (Seq[T]) => Unit,
+                                              additionFilter :Option[String] = None
+                                             ){
      def load = {
        val tBegin = System.currentTimeMillis
-       val foundFilesCount = files.count(_.absName.contains(entityName))
-       log.info(s"$entityName :$foundFilesCount files")
-       val seqEntity :Seq[T] = files
+       val foundFiles = files.filter(_.absName.contains(entityName))
          //.filter(fn => !fn.parentAbsName.contains("Цифровая экономика"))
-         //.filter(fn => !fn.parentAbsName.contains("Культура"))
+         //.filter(fn => fn.parentAbsName.contains("Здравоохранение"))
          //.filter(fn => fn.parentAbsName.contains("Транспортная часть комплексного"))
-         .filter(fn => fn.absName.contains(entityName)).flatMap(parseFunc)
+         .filter(fn => fn.absName.contains(entityName))
+         .filter(fn => additionFilter match {  //Additional filter - using if exists (no None)
+           case Some(s) => fn.absName.contains(s)
+           case None => true
+         })
+       /**
+        * Output file names for debug purpose.
+        */
+       foundFiles.foreach(f => log.info(f.absName))
+
+       log.info(s"$entityName :${foundFiles.size} files")
+       val seqEntity :Seq[T] = foundFiles.flatMap(parseFunc)
        try {
          saveIntoDbFunc(seqEntity)
        } catch {
@@ -90,16 +122,23 @@ class ParsersLoaders(files :Seq[FileNode], conn :Connection) {
     }
 
     val seqLoads :Seq[FileLoadMeta[_ <: CommCCTrait]] = Seq(
-      FileLoadMeta[CoExecutor]("Соисполнители",0, ParseCoex, saveCoExecutors),
-      FileLoadMeta[InterestedFoiv]("Заинтересованные ФОИВ",0, ParseInteresFoiv, saveInterestedFoiv),
-      FileLoadMeta[TargetIndic]("Цели и показатели.xlsx",0, ParseTargetIndic, saveTargetIndic),
-      FileLoadMeta[ProjStruct]("Структура проекта.xlsx",0, ParsePrjStruct, saveProjStruct),
-      FileLoadMeta[TargetIndicCode]("Цели и показатели-Код",0, ParseTargetIndicCode, saveTargetIndicCode),
-      FileLoadMeta[TaskCode]("Задачи-Код",0, ParseTaskCode, saveTaskCode),
-      FileLoadMeta[FinancialProvision]("Финансовое обеспечение-ФБ",1, ParseFinProvis, saveFinProvis)
+      FileLoadMeta[CoExecutor]("Соисполнители", 0, ParseCoex, saveCoExecutors),
+      FileLoadMeta[InterestedFoiv]("Заинтересованные ФОИВ", 0, ParseInteresFoiv, saveInterestedFoiv),
+      FileLoadMeta[TargetIndic]("Цели и показатели.xlsx", 0, ParseTargetIndic, saveTargetIndic),
+      FileLoadMeta[ProjStruct]("Структура проекта.xlsx", 0, ParsePrjStruct, saveProjStruct),
+      FileLoadMeta[TargetIndicCode]("Цели и показатели-Код", 0, ParseTargetIndicCode, saveTargetIndicCode),
+      FileLoadMeta[TaskCode]("Задачи-Код", 0, ParseTaskCode, saveTaskCode),
+      FileLoadMeta[FinancialProvision]("Финансовое обеспечение-ФБ", 0, ParseFinProvis, saveFinProvis),
+      FileLoadMeta[MethodCalc]("Методика расчета показателей.xlsx", 0, ParseMethodCalc, saveMethodCalc),
+      FileLoadMeta[MethodCalcCode]("Методика расчета показателей-Код", 0, ParseMethodCalcCode, saveMethodCalcCode),
+      FileLoadMeta[Tasks]("Задачи.xlsx", 0, ParseTasks, saveTasks),
+      FileLoadMeta[Government]("Орган управления.xlsx", 0, ParseGovernment, saveGovernment),
+      FileLoadMeta[AdditInfo]("Дополнительная информация.xlsx", 0, ParseAdditInfo, saveAdditInfo),
+      FileLoadMeta[Results]("Результаты", 0, ParseResults, saveResults, Some(").xlsx")),
+      FileLoadMeta[AssessmentTaskIndic]("Оценка обеспеченности целей и целевых показателей национального проекта.xlsx", 1, ParseAssessmentTaskIndic, saveAssessmentTaskIndic)
     )
 
-    seqLoads.collect{
+      seqLoads.collect{
       case flm if flm.isEnabled == 1 => flm.load
     } //collect instead of filter + map
     log.info(s"~~~~~~~~~~~~~ End load all files. Duration ${System.currentTimeMillis - t1} ms. ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")

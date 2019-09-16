@@ -113,7 +113,7 @@ case class FinancialProvision(filename :String, np_name:String,
                               s_name :String,
                               grbs_code :String,
                               grbs_name :String,
-                              np_name :String,
+                              natp_name :String,
                               vr_name :String,
                               cs_id :String,
                               //------------

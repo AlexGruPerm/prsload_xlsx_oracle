@@ -1,6 +1,7 @@
 package loader
 
 import org.apache.poi.ss.usermodel.{Cell, CellType, Row}
+
 import scala.jdk.CollectionConverters._
 
 /**
@@ -195,7 +196,150 @@ case class AssessmentTaskIndic(filename :String, np_name:String,
                               ) extends CommCCTrait
 
 /**
- * Case class for data from file like  X. Финансовое обеспечение-ФБ.xlsx
+ *  Case class for data from file like  X. Финансовое обеспечение-Мониторинг исполнения ФБ.xlsx
+ *  Special case: a lot of columns for 3 years and with different structures.
+ *  Load it into db table by XLSX Column Names:
+*/
+case class FinancialProvisionMonitor(filename :String,
+                                     np_name:String,
+                                     A :String,
+                                     B :String,
+                                     C :String,
+                                     D :String,
+                                     E :String,
+                                     F :String,
+                                     G :String,
+                                     H :String,
+                                     I :String,
+                                     J :String,
+                                     K :String,
+                                     L :String,
+                                     M :String,
+                                     N :String,
+                                     O :String,
+                                     P :String,
+                                     Q :String,
+                                     R :String,
+                                     S :String,
+                                     T :String,
+                                     U :String,
+                                     V :String,
+                                     W :String,
+                                     X :String,
+                                     Y :String,
+                                     Z :String,
+                                     AA :String,
+                                     AB :String,
+                                     AC :String,
+                                     AD :String,
+                                     AE :String,
+                                     AF :String,
+                                     AG :String,
+                                     AH :String,
+                                     AI :String,
+                                     AJ :String,
+                                     AK :String,
+                                     AL :String,
+                                     AM :String,
+                                     AN :String,
+                                     AO :String,
+                                     AP :String,
+                                     AQ :String,
+                                     AR :String,
+                                     ASCOL :String,
+                                     AT :String,
+                                     AU :String,
+                                     AV :String,
+                                     AW :String,
+                                     AX :String,
+                                     AY :String,
+                                     AZ :String,
+                                     BA :String,
+                                     BB :String,
+                                     BC :String,
+                                     BD :String,
+                                     BE :String,
+                                     BF :String,
+                                     BG :String,
+                                     BH :String,
+                                     BI :String,
+                                     BJ :String,
+                                     BK :String,
+                                     BL :String,
+                                     BM :String,
+                                     BN :String,
+                                     BO :String,
+                                     BP :String,
+                                     BQ :String,
+                                     BR :String,
+                                     BS :String,
+                                     BT :String,
+                                     BU :String,
+                                     BV :String,
+                                     BW :String,
+                                     BX :String,
+                                     BYCOL :String,
+                                     BZ :String,
+                                     CA :String,
+                                     CB :String,
+                                     CC :String,
+                                     CD :String,
+                                     CE :String,
+                                     RowNum :Int
+                                    ) extends CommCCTrait
+
+
+case class FinancialProvisionVolume( filename :String, np_name:String,
+                                     A :String,
+                                     B :String,
+                                     C :String,
+                                     D :String,
+                                     E :String,
+                                     F :String,
+                                     G :String,
+                                     H :String,
+                                     I :String,
+                                     J :String,
+                                     K :String,
+                                     L :String,
+                                     M :String,
+                                     N :String,
+                                     O :String,
+                                     P :String,
+                                     Q :String,
+                                     R :String,
+                                     S :String,
+                                     T :String,
+                                     U :String,
+                                     V :String,
+                                     W :String,
+                                     X :String,
+                                     Y :String,
+                                     Z :String,
+                                     AA :String,
+                                     AB :String,
+                                     AC :String,
+                                     AD :String,
+                                     AE :String,
+                                     AF :String,
+                                     AG :String,
+                                     AH :String,
+                                     AI :String,
+                                     AJ :String,
+                                     AK :String,
+                                     AL :String,
+                                     AM :String,
+                                     AN :String,
+                                     AO :String,
+                                     AP :String,
+                                     AQ :String,
+                                     AR :String,
+                                     ASCOL :String,
+                                     RowNum :Int
+                                   ) extends CommCCTrait
+
+/**
+ * Case class for data from file like X. Финансовое обеспечение-ФБ.xlsx
 */
 case class FinancialProvision(filename :String, np_name:String,
                               fp_code :String,
@@ -266,7 +410,7 @@ case class MethodCalcCode(filename :String, np_name:String,
 object CommonCCStructs {
 
   //todo: replace deprecated method
-  private implicit def getCellasStr(c :Cell): String  =
+  private implicit def getCellasStr(c: Cell): String =
     try {
       c.getCellType match {
         case CellType.STRING => c.getStringCellValue
@@ -276,10 +420,18 @@ object CommonCCStructs {
         case _ => " "
       }
     } catch {
-      case e: Throwable => throw new CustomException(msg = s"EXCEPTION [getCellasStr] getCellTypeEnum = " + c.getCellType+" "+e.getMessage)
-      case e :NullPointerException =>  throw new CustomException(msg = s"EXCEPTION [getCellasStr] getCellTypeEnum = " + c.getCellType+" "+e.getMessage)
+      case e: Throwable => try {
+        c.getCellType match {
+          case CellType.STRING => " "
+          case CellType.NUMERIC => "0.0"
+          case _ => " "
+        }
+      } catch {
+        case e: Throwable => " "
+        //throw new CustomException(msg = s"EXCEPTION [getCellasStr] getCellTypeEnum = " + c.getCellType + " " + e.getMessage)
+        //case e: NullPointerException => throw new CustomException(msg = s"EXCEPTION [getCellasStr] getCellTypeEnum = " + c.getCellType + " " + e.getMessage)
+      }
     }
-
 
 
   /**
@@ -287,8 +439,8 @@ object CommonCCStructs {
    */
   private def cellToTargetIndic(filename: String, np_name: String, row: Row): TargetIndic = {
     /**
-     *  Here we use implicit conversion from Cell Type of different CellType.X into String with  - getCellasStr
-    */
+     * Here we use implicit conversion from Cell Type of different CellType.X into String with  - getCellasStr
+     */
     TargetIndic(
       filename, np_name,
       row.getCell(0),
@@ -316,7 +468,7 @@ object CommonCCStructs {
       row.getCell(22),
       row.getCell(23),
       row.getCell(24),
-      row.getCell(25),//целевое значение
+      row.getCell(25), //целевое значение
       row.getCell(26),
       row.getCell(27),
       row.getCell(28),
@@ -363,7 +515,7 @@ object CommonCCStructs {
       row.getRowNum
     )
 
-  private def cellToTaskCode(filename: String, np_name: String, row: Row) :TaskCode =
+  private def cellToTaskCode(filename: String, np_name: String, row: Row): TaskCode =
     TaskCode(
       filename, np_name,
       row.getCell(0),
@@ -375,7 +527,149 @@ object CommonCCStructs {
       row.getRowNum
     )
 
-  private def cellToFinProvis(filename: String, np_name: String, row: Row) :FinancialProvision = //{
+  private def cellToFinProvisVolume(filename: String, np_name: String, row: Row): FinancialProvisionVolume =
+    FinancialProvisionVolume(
+      filename, np_name,
+      row.getCell(0),
+      row.getCell(1),
+      row.getCell(2),
+      row.getCell(3),
+      row.getCell(4),
+      row.getCell(5),
+      row.getCell(6),
+      row.getCell(7),
+      row.getCell(8),
+      row.getCell(9),
+      row.getCell(10),
+      row.getCell(11),
+      row.getCell(12),
+      row.getCell(13),
+      row.getCell(14),
+      row.getCell(15),
+      row.getCell(16),
+      row.getCell(17),
+      row.getCell(18),
+      row.getCell(19),
+      row.getCell(20),
+      row.getCell(21),
+      row.getCell(22),
+      row.getCell(23),
+      row.getCell(24),
+      row.getCell(25),
+      row.getCell(26),
+      row.getCell(27),
+      row.getCell(28),
+      row.getCell(29),
+      row.getCell(30),
+      row.getCell(31),
+      row.getCell(32),
+      row.getCell(33),
+      row.getCell(34),
+      row.getCell(35),
+      row.getCell(36),
+      row.getCell(37),
+      row.getCell(38),
+      row.getCell(39),
+      row.getCell(40),
+      row.getCell(41),
+      row.getCell(42),
+      row.getCell(43),
+      row.getCell(44),
+      row.getRowNum
+    )
+
+
+  private def cellToFinProvisMonitor(filename: String, np_name: String, row: Row): FinancialProvisionMonitor =
+    FinancialProvisionMonitor(
+      filename, np_name,
+      row.getCell(0),
+      row.getCell(1),
+      row.getCell(2),
+      row.getCell(3),
+      row.getCell(4),
+      row.getCell(5),
+      row.getCell(6),
+      row.getCell(7),
+      row.getCell(8),
+      row.getCell(9),
+      row.getCell(10),
+      row.getCell(11),
+      row.getCell(12),
+      row.getCell(13),
+      row.getCell(14),
+      row.getCell(15),
+      row.getCell(16),
+      row.getCell(17),
+      row.getCell(18),
+      row.getCell(19),
+      row.getCell(20),
+      row.getCell(21),
+      row.getCell(22),
+      row.getCell(23),
+      row.getCell(24),
+      row.getCell(25),
+      row.getCell(26),
+      row.getCell(27),
+      row.getCell(28),
+      row.getCell(29),
+      row.getCell(30),
+      row.getCell(31),
+      row.getCell(32),
+      row.getCell(33),
+      row.getCell(34),
+      row.getCell(35),
+      row.getCell(36),
+      row.getCell(37),
+      row.getCell(38),
+      row.getCell(39),
+      row.getCell(40),
+      row.getCell(41),
+      row.getCell(42),
+      row.getCell(43),
+      row.getCell(44),
+      row.getCell(45),
+      row.getCell(46),
+      row.getCell(47),
+      row.getCell(48),
+      row.getCell(49),
+      row.getCell(50),
+      row.getCell(51),
+      row.getCell(52),
+      row.getCell(53),
+      row.getCell(54),
+      row.getCell(55),
+      row.getCell(56),
+      row.getCell(57),
+      row.getCell(58),
+      row.getCell(59),
+      row.getCell(60),
+      row.getCell(61),
+      row.getCell(62),
+      row.getCell(63),
+      row.getCell(64),
+      row.getCell(65),
+      row.getCell(66),
+      row.getCell(67),
+      row.getCell(68),
+      row.getCell(69),
+      row.getCell(70),
+      row.getCell(71),
+      row.getCell(72),
+      row.getCell(73),
+      row.getCell(74),
+      row.getCell(75),
+      row.getCell(76),
+      row.getCell(77),
+      row.getCell(78),
+      row.getCell(79),
+      row.getCell(80),
+      row.getCell(81),
+      row.getCell(82),
+      row.getRowNum
+    )
+
+
+  private def cellToFinProvis(filename: String, np_name: String, row: Row) :FinancialProvision =
       FinancialProvision(
         filename, np_name,
         row.getCell(0),
@@ -587,6 +881,21 @@ object CommonCCStructs {
   def rowsToSeqFinProvis(filename :String, np_name:String, rowIter :Iterator[Row]) :Seq[FinancialProvision] = {
     movePointer(rowIter,2)
     rowIter.map(r => cellToFinProvis(filename,np_name,r)).toSeq
+  }
+
+  def rowsToSeqFinProvisMonitor(filename :String, np_name:String, rowIter :Iterator[Row]) :Seq[FinancialProvisionMonitor] = {
+    movePointer(rowIter,4)
+    /**
+     * example of output column names:
+    */
+    //val iterCells :List[Cell] =  rowIter.next.cellIterator.asScala.iterator.toList
+    //iterCells.foreach(cc => println("   "+CellReference.convertNumToColString(cc.getColumnIndex())+" :String,"))
+    rowIter.map(r => cellToFinProvisMonitor(filename,np_name,r)).toSeq
+  }
+
+  def rowsToSeqFinProvisVolume(filename :String, np_name:String, rowIter :Iterator[Row]) :Seq[FinancialProvisionVolume] = {
+    movePointer(rowIter, 1)
+    rowIter.map(r => cellToFinProvisVolume(filename,np_name,r)).toSeq
   }
 
   def rowsToSeqMethodCalc(filename :String, np_name:String, rowIter :Iterator[Row]) :Seq[MethodCalc] = {

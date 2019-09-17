@@ -24,10 +24,6 @@ object XLSXLoader extends App {
     // make the connection
     Class.forName(driver)
     connection = DriverManager.getConnection(url, username, password)
-    /*
-    val listOfFiles = getFileTree(new File(rootPathToFiles))
-    listOfFiles.foreach(fn => log.info(fn.getAbsolutePath))
-    */
     val files :Seq[FileNode] = getFilesTree(new File(rootPathToFiles))
     log.info(s"Directory $rootPathToFiles contains ${files.size} files and directories.")
     log.info(s" Directories ${files.count(_.isFile == false)}")
@@ -37,18 +33,6 @@ object XLSXLoader extends App {
     val parser = new ParsersLoaders(files,connection)
     parser.parseLoadAll
 
-    /* keep it here just as select example.
-    //todo: remove it.
-    // create the statement, and run the select query
-    val statement = connection.createStatement()
-    val resultSet = statement.executeQuery("select user,to_char(trunc(sysdate),'dd.mm.yyyy') as ddate,1 as numval from dual")
-    while ( resultSet.next() ) {
-      val user = resultSet.getString("user")
-      val ddate = resultSet.getString("ddate")
-      val numval = resultSet.getString("numval")
-      println("user = "+user+" ddate = "+ddate+" numval = "+numval)
-    }
-    */
   } catch {
     case e => e.printStackTrace
   }

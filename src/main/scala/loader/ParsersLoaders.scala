@@ -40,12 +40,13 @@ class ParsersLoaders(files :Seq[FileNode], conn :Connection) {
 
   private def ParseFinProvis(fn :FileNode) :Seq[FinancialProvision] =
     Function.tupled(rowsToSeqFinProvis _)(fnToParserParams(fn))
-  /* :todo DEBUG
-  {
-    log.info(s"PARENT : ${fn.parentAbsName}  file =  ${fn.fFile}")
-    Function.tupled(rowsToSeqFinProvis _)(fnToParserParams(fn))
-  }
-*/
+
+  private def ParseFinProvisMonitor(fn :FileNode) :Seq[FinancialProvisionMonitor] =
+    Function.tupled(rowsToSeqFinProvisMonitor _)(fnToParserParams(fn))
+
+  private def ParseFinProvisVolume(fn :FileNode) :Seq[FinancialProvisionVolume] =
+    Function.tupled(rowsToSeqFinProvisVolume _)(fnToParserParams(fn))
+
   private def ParseMethodCalc(fn :FileNode) :Seq[MethodCalc] =
     Function.tupled(rowsToSeqMethodCalc _)(fnToParserParams(fn))
 
@@ -96,10 +97,10 @@ class ParsersLoaders(files :Seq[FileNode], conn :Connection) {
        val tBegin = System.currentTimeMillis
        val foundFiles = files.filter(_.absName.contains(entityName))
          //.filter(fn => !fn.parentAbsName.contains("Цифровая экономика"))
-         //.filter(fn => fn.parentAbsName.contains("Культура"))
+         //.filter(fn => fn.parentAbsName.contains("Здравоохранение"))
          //.filter(fn => fn.parentAbsName.contains("Транспортная часть комплексного"))
          .filter(fn => fn.absName.contains(entityName))
-         .filter(fn => additionFilter match {  //Additional filter - using if exists (no None)
+         .filter(fn => additionFilter match {  //Additional filter - using if exists (not None)
            case Some(s) => fn.absName.contains(s)
            case None => true
          })
@@ -118,20 +119,23 @@ class ParsersLoaders(files :Seq[FileNode], conn :Connection) {
     }
 
     val seqLoads :Seq[FileLoadMeta[_ <: CommCCTrait]] = Seq(
-      FileLoadMeta[CoExecutor]("Соисполнители", 1, ParseCoex, saveCoExecutors),
-      FileLoadMeta[InterestedFoiv]("Заинтересованные ФОИВ", 1, ParseInteresFoiv, saveInterestedFoiv),
-      FileLoadMeta[TargetIndic]("Цели и показатели.xlsx", 1, ParseTargetIndic, saveTargetIndic),
-      FileLoadMeta[ProjStruct]("Структура проекта.xlsx", 1, ParsePrjStruct, saveProjStruct),
-      FileLoadMeta[TargetIndicCode]("Цели и показатели-Код", 1, ParseTargetIndicCode, saveTargetIndicCode),
-      FileLoadMeta[TaskCode]("Задачи-Код", 1, ParseTaskCode, saveTaskCode),
-      FileLoadMeta[FinancialProvision]("Финансовое обеспечение-ФБ", 1, ParseFinProvis, saveFinProvis),
-      FileLoadMeta[MethodCalc]("Методика расчета показателей.xlsx", 1, ParseMethodCalc, saveMethodCalc),
-      FileLoadMeta[MethodCalcCode]("Методика расчета показателей-Код", 1, ParseMethodCalcCode, saveMethodCalcCode),
-      FileLoadMeta[Tasks]("Задачи.xlsx", 1, ParseTasks, saveTasks),
-      FileLoadMeta[Government]("Орган управления.xlsx", 1, ParseGovernment, saveGovernment),
-      FileLoadMeta[AdditInfo]("Дополнительная информация.xlsx", 1, ParseAdditInfo, saveAdditInfo),
-      FileLoadMeta[Results]("Результаты", 1, ParseResults, saveResults, Some(").xlsx")),
-      FileLoadMeta[AssessmentTaskIndic]("Оценка обеспеченности целей и целевых показателей национального проекта.xlsx", 1, ParseAssessmentTaskIndic, saveAssessmentTaskIndic)
+      FileLoadMeta[CoExecutor]("Соисполнители", 0, ParseCoex, saveCoExecutors),
+      FileLoadMeta[InterestedFoiv]("Заинтересованные ФОИВ", 0, ParseInteresFoiv, saveInterestedFoiv),
+      FileLoadMeta[TargetIndic]("Цели и показатели.xlsx", 0, ParseTargetIndic, saveTargetIndic),
+      FileLoadMeta[TargetIndicCode]("Цели и показатели-Код", 0, ParseTargetIndicCode, saveTargetIndicCode),
+      FileLoadMeta[ProjStruct]("Структура проекта.xlsx", 0, ParsePrjStruct, saveProjStruct),
+      FileLoadMeta[Tasks]("Задачи.xlsx", 0, ParseTasks, saveTasks),
+      FileLoadMeta[TaskCode]("Задачи-Код", 0, ParseTaskCode, saveTaskCode),
+      FileLoadMeta[Results]("Результаты", 0, ParseResults, saveResults, Some(").xlsx")),
+      FileLoadMeta[FinancialProvision]("Финансовое обеспечение-ФБ", 0, ParseFinProvis, saveFinProvis),
+      //next 2 files loading into DB with column names as in file header.
+      FileLoadMeta[FinancialProvisionMonitor]("Финансовое обеспечение-Мониторинг исполнения ФБ.xlsx", 0, ParseFinProvisMonitor, saveFinProvisMonitor),
+      FileLoadMeta[FinancialProvisionVolume]("Финансовое обеспечение-Объем финансового обеспечения НП.xlsx", 1, ParseFinProvisVolume, saveFinProvisVolume),
+      FileLoadMeta[AdditInfo]("Дополнительная информация.xlsx", 0, ParseAdditInfo, saveAdditInfo),
+      FileLoadMeta[MethodCalc]("Методика расчета показателей.xlsx", 0, ParseMethodCalc, saveMethodCalc),
+      FileLoadMeta[MethodCalcCode]("Методика расчета показателей-Код", 0, ParseMethodCalcCode, saveMethodCalcCode),
+      FileLoadMeta[AssessmentTaskIndic]("Оценка обеспеченности целей и целевых показателей национального проекта.xlsx", 0, ParseAssessmentTaskIndic, saveAssessmentTaskIndic),
+      FileLoadMeta[Government]("Орган управления.xlsx", 0, ParseGovernment, saveGovernment)
     )
 
       seqLoads.collect{

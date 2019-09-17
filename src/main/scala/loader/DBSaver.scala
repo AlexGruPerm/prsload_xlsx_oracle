@@ -11,8 +11,8 @@ object DBSaver {
    def saveCoExecutors(seq :Seq[CoExecutor])(implicit conn :Connection) ={
     val insertSql =
       """
-        |insert into COEXECUTOR(filename,np_name,code,name,budget_stages_cycle)
-        |values(?,?,?,?,?)"""
+        |insert into COEXECUTOR(filename,np_name,code,name,budget_stages_cycle,rn)
+        |values(?,?,?,?,?,?)"""
         .stripMargin
 
     val preparedStmt: PreparedStatement = conn.prepareStatement(insertSql)
@@ -23,6 +23,7 @@ object DBSaver {
         preparedStmt.setString (3, r.code)
         preparedStmt.setString (4, r.name)
         preparedStmt.setString (5, r.budget_stages_cycle)
+        preparedStmt.setInt(6,r.RowNum)
         preparedStmt.execute
     }
     preparedStmt.close()
@@ -32,8 +33,8 @@ object DBSaver {
    def saveInterestedFoiv(seq :Seq[InterestedFoiv])(implicit conn :Connection) ={
     val insertSql =
       """
-        |insert into interested_foiv(filename,np_name,id_project_version,code,name)
-        |values(?,?,?,?,?)"""
+        |insert into interested_foiv(filename,np_name,id_project_version,code,name,rn)
+        |values(?,?,?,?,?,?)"""
         .stripMargin
 
     val preparedStmt: PreparedStatement = conn.prepareStatement(insertSql)
@@ -44,6 +45,7 @@ object DBSaver {
         preparedStmt.setString (3, r.id_project_version)
         preparedStmt.setString (4, r.code)
         preparedStmt.setString (5, r.name)
+        preparedStmt.setInt(6,r.RowNum)
         preparedStmt.execute
     }
     preparedStmt.close()
@@ -55,8 +57,8 @@ object DBSaver {
       """ insert into target_indics(FILENAME,NP_NAME,NPP,CODE,NODOPINIDC,PROJECT_VERS,NPP_USELESS,TI_TYPE,INDIC_NAME,MEASURE,VEHA_INDIC,BASE_VALUE,DATE_CALC,
         |DEL_VAL_2018,DEL_VAL_2019,DEL_VAL_2020,DEL_VAL_2021,DEL_VAL_2022,DEL_VAL_2023,DEL_VAL_2024,
         |VAL_2018,VAL_2019,VAL_2020,VAL_2021,VAL_2022,VAL_2023,VAL_2024,TARGET_VALUE,CONTROL_LEVEL,PREDICT_INIDC_VAL_WITHOUT_REL,
-        |DESCRIPTION,WAY_ACHIV_INDIC,PREDICT_ACHIV_DATE,IDENT,DECREE,NUM,IS_USING_IN_FP)
-        |values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) """.stripMargin
+        |DESCRIPTION,WAY_ACHIV_INDIC,PREDICT_ACHIV_DATE,IDENT,DECREE,NUM,IS_USING_IN_FP,rn)
+        |values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) """.stripMargin
 
     val preparedStmt: PreparedStatement = conn.prepareStatement(insertSql)
     seq.foreach{
@@ -98,6 +100,7 @@ object DBSaver {
         preparedStmt.setString(35, r.decree)
         preparedStmt.setString(36, r.num)
         preparedStmt.setString(37, r.is_using_in_fp)
+        preparedStmt.setInt(38,r.RowNum)
         preparedStmt.execute
     }
     preparedStmt.close()
@@ -106,8 +109,8 @@ object DBSaver {
 
    def saveProjStruct(seq :Seq[ProjStruct])(implicit conn :Connection) ={
     val insertSql =
-      """ insert into proj_struct(filename,np_name,ident,code,code_bk,s_name,curator,supervisor,stages,begin_impl_date,end_impl_date,is_related_np_taks)
-        |values(?,?,?,?,?,?,?,?,?,?,?,?) """
+      """ insert into proj_struct(filename,np_name,ident,code,code_bk,s_name,curator,supervisor,stages,begin_impl_date,end_impl_date,is_related_np_taks,rn)
+        |values(?,?,?,?,?,?,?,?,?,?,?,?,?) """
         .stripMargin
 
     val preparedStmt: PreparedStatement = conn.prepareStatement(insertSql)
@@ -125,6 +128,7 @@ object DBSaver {
         preparedStmt.setString (10, r.begin_impl_date)
         preparedStmt.setString (11, r.end_impl_date)
         preparedStmt.setString (12, r.is_related_np_taks)
+        preparedStmt.setInt(13,r.RowNum)
         preparedStmt.execute
     }
     preparedStmt.close()
@@ -134,8 +138,8 @@ object DBSaver {
   def saveTargetIndicCode(seq :Seq[TargetIndicCode])(implicit conn :Connection) ={
     val insertSql =
       """
-        |insert into target_indics_code(filename,np_name,ww_np,measure,vtype,val_2018,val_2019, val_2020, val_2021,val_2022,val_2023, val_2024,targetIndicId)
-        |values(?,?,?,?,?,?,?,?,?,?,?,?,?)"""
+        |insert into target_indics_code(filename,np_name,ww_np,measure,vtype,val_2018,val_2019, val_2020, val_2021,val_2022,val_2023, val_2024,targetIndicId,rn)
+        |values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)"""
         .stripMargin
 
     val preparedStmt: PreparedStatement = conn.prepareStatement(insertSql)
@@ -154,6 +158,7 @@ object DBSaver {
         preparedStmt.setString (11, r.val_2023)
         preparedStmt.setString (12, r.val_2024)
         preparedStmt.setString (13, r.targetIndicId)
+        preparedStmt.setInt(14,r.RowNum)
         preparedStmt.execute
     }
     preparedStmt.close()
@@ -163,8 +168,8 @@ object DBSaver {
   def saveTaskCode(seq :Seq[TaskCode])(implicit conn :Connection) = {
     val insertSql =
       """
-        |insert into task_code(filename,np_name,code,s_name,percent_impact,fp_id,targetIndicId,taskId)
-        |values(?,?,?,?,?,?,?,?)"""
+        |insert into task_code(filename,np_name,code,s_name,percent_impact,fp_id,targetIndicId,taskId,rn)
+        |values(?,?,?,?,?,?,?,?,?)"""
         .stripMargin
 
     val preparedStmt: PreparedStatement = conn.prepareStatement(insertSql)
@@ -178,6 +183,7 @@ object DBSaver {
         preparedStmt.setString (6, r.fp_id)
         preparedStmt.setString (7, r.targetIndicId)
         preparedStmt.setString (8, r.taskId)
+        preparedStmt.setInt(9,r.RowNum)
         preparedStmt.execute
     }
     preparedStmt.close()
@@ -192,8 +198,8 @@ object DBSaver {
         |BUDGET_ASSIGN_2019,APPROVED_LBO_2019,LOCKED_ELBO_2019,BROUGHT_PNO_2019,PNO_WCONDITIONS_2019,
         |BUDGET_ASSIGN_2020,APPROVED_LBO_2020,LOCKED_ELBO_2020,BROUGHT_PNO_2020,PNO_WCONDITIONS_2020,
         |BUDGET_ASSIGN_2021,APPROVED_LBO_2021,LOCKED_ELBO_2021,BROUGHT_PNO_2021,PNO_WCONDITIONS_2021,
-        |SBT_ROW_TYPE)
-        |values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"""
+        |SBT_ROW_TYPE,rn)
+        |values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"""
         .stripMargin
 
     val preparedStmt: PreparedStatement = conn.prepareStatement(insertSql)
@@ -227,6 +233,7 @@ object DBSaver {
         preparedStmt.setString(26, r.brought_pno_2021)
         preparedStmt.setString(27, r.pno_wconditions_2021)
         preparedStmt.setString(28, r.sbt_row_type)
+        preparedStmt.setInt(29,r.RowNum)
         preparedStmt.execute
     }
     preparedStmt.close()
@@ -236,8 +243,8 @@ object DBSaver {
 
   def saveMethodCalc(seq :Seq[MethodCalc])(implicit conn :Connection) = {
     val insertSql =
-      """ insert into method_calc(filename,np_name,code,name_basic_indic,measure,methodcalc,agr_level_1,agr_level_2,asses_period,provision_date,methodcalc_id,descr)
-        | values(?,?,?,?,?,?,?,?,?,?,?,?) """
+      """ insert into method_calc(filename,np_name,code,name_basic_indic,measure,methodcalc,agr_level_1,agr_level_2,asses_period,provision_date,methodcalc_id,descr,rn)
+        | values(?,?,?,?,?,?,?,?,?,?,?,?,?) """
         .stripMargin
 
     val preparedStmt: PreparedStatement = conn.prepareStatement(insertSql)
@@ -255,6 +262,7 @@ object DBSaver {
         preparedStmt.setString(10, r.provision_date)
         preparedStmt.setString(11, r.methodcalc_id)
         preparedStmt.setString(12, r.descr)
+        preparedStmt.setInt(13,r.RowNum)
         preparedStmt.execute
     }
     preparedStmt.close()
@@ -264,8 +272,8 @@ object DBSaver {
 
   def saveMethodCalcCode(seq :Seq[MethodCalcCode])(implicit conn :Connection) = {
     val insertSql =
-      """ insert into method_calc_code(filename,np_name,method,method_code,method_name,measure,data_source,source_respons,agr_level,asses_period,provision_date,var_description)
-        | values(?,?,?,?,?,?,?,?,?,?,?,?) """
+      """ insert into method_calc_code(filename,np_name,method,method_code,method_name,measure,data_source,source_respons,agr_level,asses_period,provision_date,var_description,rn)
+        | values(?,?,?,?,?,?,?,?,?,?,?,?,?) """
         .stripMargin
 
     val preparedStmt: PreparedStatement = conn.prepareStatement(insertSql)
@@ -283,7 +291,7 @@ object DBSaver {
         preparedStmt.setString(10, r.asses_period)
         preparedStmt.setString(11, r.provision_date)
         preparedStmt.setString(12, r.var_description)
-
+        preparedStmt.setInt(13,r.RowNum)
         preparedStmt.execute
     }
     preparedStmt.close()
@@ -292,8 +300,8 @@ object DBSaver {
 
   def saveTasks(seq :Seq[Tasks])(implicit conn :Connection) = {
     val insertSql =
-      """ insert into tasks(FILENAME,NP_NAME,NPP,CODE,PRJ_VERS,PRJ_NAME,TASK_NAME,RESPONS,IMPL_PERIOD,FP_NAME,DECREE,CODE_NAME)
-        | values(?,?,?,?,?,?,?,?,?,?,?,?) """
+      """ insert into tasks(FILENAME,NP_NAME,NPP,CODE,PRJ_VERS,PRJ_NAME,TASK_NAME,RESPONS,IMPL_PERIOD,FP_NAME,DECREE,CODE_NAME,rn)
+        | values(?,?,?,?,?,?,?,?,?,?,?,?,?) """
         .stripMargin
 
     val preparedStmt: PreparedStatement = conn.prepareStatement(insertSql)
@@ -311,6 +319,7 @@ object DBSaver {
         preparedStmt.setString(10, r.fp_name)
         preparedStmt.setString(11, r.decree)
         preparedStmt.setString(12, r.code_name)
+        preparedStmt.setInt(13,r.RowNum)
         preparedStmt.execute
     }
     preparedStmt.close()
@@ -319,8 +328,9 @@ object DBSaver {
 
   def saveGovernment(seq :Seq[Government])(implicit conn :Connection) = {
     val insertSql =
-      """ insert into government(FILENAME,NP_NAME,PARTICIPANT,LOGIN,POSITION,ORG1,ORG2,ROLE_IN_TEAM,GROUP_OF_ROLES,BASIS,PERIOD_PARTIC_FROM,PERIOD_PARTIC_TO,PRJ_ID,USER_ID,ROLE_IN_TEAM_ID,ROLE_IN_TEAM_PRIOR,ROLE_IN_TEAM_SYSCODE,USER_FIO_POSIT,ID,PERCENT_PARTIC)
-        | values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) """
+      """ insert into government(FILENAME,NP_NAME,PARTICIPANT,LOGIN,POSITION,ORG1,ORG2,ROLE_IN_TEAM,GROUP_OF_ROLES,BASIS,PERIOD_PARTIC_FROM,
+        | PERIOD_PARTIC_TO,PRJ_ID,USER_ID,ROLE_IN_TEAM_ID,ROLE_IN_TEAM_PRIOR,ROLE_IN_TEAM_SYSCODE,USER_FIO_POSIT,ID,PERCENT_PARTIC,rn)
+        | values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) """
         .stripMargin
 
     val preparedStmt: PreparedStatement = conn.prepareStatement(insertSql)
@@ -346,6 +356,7 @@ object DBSaver {
         preparedStmt.setString(18, r.user_fio_posit)
         preparedStmt.setString(19, r.id)
         preparedStmt.setString(20, r.percent_partic)
+        preparedStmt.setInt(21,r.RowNum)
         preparedStmt.execute
     }
     preparedStmt.close()
@@ -354,8 +365,9 @@ object DBSaver {
 
   def saveResults(seq :Seq[Results])(implicit conn :Connection) = {
     val insertSql =
-      """   insert into results(FILENAME,NP_NAME,FP_NAME,TASK_OF_NP,CODE,S_NAME,RESULT_TYPE,MEASURE,RESPONS,CONTROL_LEVEL,VALUE,ACHIEV_DATE,TASK_VERS_PROJ_ID,TASK_ID,IS_MONEY,REALIZE_REGIONS,WITHOUT_FB)
-        |  values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) """
+      """   insert into results(FILENAME,NP_NAME,FP_NAME,TASK_OF_NP,CODE,S_NAME,RESULT_TYPE,MEASURE,RESPONS,
+        |   CONTROL_LEVEL,VALUE,ACHIEV_DATE,TASK_VERS_PROJ_ID,TASK_ID,IS_MONEY,REALIZE_REGIONS,WITHOUT_FB,rn)
+        |  values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) """
         .stripMargin
 
     val preparedStmt: PreparedStatement = conn.prepareStatement(insertSql)
@@ -378,6 +390,7 @@ object DBSaver {
         preparedStmt.setString(15, r.is_money)
         preparedStmt.setString(16, r.realize_regions)
         preparedStmt.setString(17, r.without_fb)
+        preparedStmt.setInt(18,r.RowNum)
 
         preparedStmt.execute
     }
@@ -387,8 +400,8 @@ object DBSaver {
 
   def saveAdditInfo(seq :Seq[AdditInfo])(implicit conn :Connection) = {
     val insertSql =
-      """   insert into  add_info(filename,np_name,s_name,npp,section,add_info)
-        |  values(?,?,?,?,?,?) """
+      """   insert into  add_info(filename,np_name,s_name,npp,section,add_info,rn)
+        |  values(?,?,?,?,?,?,?) """
         .stripMargin
 
     val preparedStmt: PreparedStatement = conn.prepareStatement(insertSql)
@@ -400,6 +413,7 @@ object DBSaver {
         preparedStmt.setString(4, r.npp)
         preparedStmt.setString(5, r.section)
         preparedStmt.setString(6, r.add_info)
+        preparedStmt.setInt(7,r.RowNum)
         preparedStmt.execute
     }
     preparedStmt.close()

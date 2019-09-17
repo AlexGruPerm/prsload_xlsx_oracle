@@ -6,25 +6,19 @@ import scala.jdk.CollectionConverters._
 /**
  *
 */
-sealed trait CommCCTrait {
-  def getFileName :String
-}
+sealed trait CommCCTrait
 
 /**
  * Case class for data from file like "Z-X.Y. Соисполнители.xlsx"
 */
-case class CoExecutor(filename :String, np_name:String, code :String, name :String, budget_stages_cycle :String)
-  extends CommCCTrait {
-  override def getFileName :String = filename
-}
+case class CoExecutor(filename :String, np_name:String, code :String, name :String, budget_stages_cycle :String, RowNum :Int)
+  extends CommCCTrait
 
 /**
  * Case class for data from file like "Z-X.Y. Заинтересованные ФОИВ.xlsx"
 */
-case class InterestedFoiv(filename :String, np_name:String, id_project_version :String, code :String, name :String)
-  extends CommCCTrait {
-  override def getFileName :String = filename
-}
+case class InterestedFoiv(filename :String, np_name:String, id_project_version :String, code :String, name :String, RowNum :Int)
+  extends CommCCTrait
 
 /**
  * Case class for data from file like "X-Y. Цели и показатели.xlsx"
@@ -65,14 +59,13 @@ case class TargetIndic(filename :String, np_name:String,
                        ident: String, // Идентификатор
                        decree: String, //Указ
                        num: String, //Индекс номера
-                       is_using_in_fp: String //Используется в ФП
+                       is_using_in_fp: String, //Используется в ФП
+                       RowNum :Int
 ) extends CommCCTrait {
   override def toString: String =
     "["+filename+"] "+" "+  npp +" "+  code +" "+  noDopInidc  +" "+ project_vers  +" "+  npp_useless +" "+  ti_type+
-     /* " "+ indic_name +" "+ measure*/ " "+veha_indic+" ["+ base_value + "] "+  date_calc +" "+val_2018+" val_22="+val_2022+" "+
+      " "+veha_indic+" ["+ base_value + "] "+  date_calc +" "+val_2018+" val_22="+val_2022+" "+
       ident+" - "+is_using_in_fp
-
-    override def getFileName :String = filename
 }
 
 /**
@@ -88,10 +81,8 @@ case class ProjStruct(filename :String, np_name:String,
                       stages :String,
                       begin_impl_date :String,
                       end_impl_date :String,
-                      is_related_np_taks :String)
-  extends CommCCTrait {
-  override def getFileName :String = filename
-}
+                      is_related_np_taks :String,
+                      RowNum :Int) extends CommCCTrait
 
 /**
  * Case class for data from file like "X-Y. Цели и показатели-Код Z.xlsx"
@@ -107,10 +98,8 @@ case class TargetIndicCode(filename :String, np_name:String,
                            val_2022: String,
                            val_2023: String,
                            val_2024: String,
-                           targetIndicId: String)
-  extends CommCCTrait {
-  override def getFileName :String = filename
-}
+                           targetIndicId: String,
+                           RowNum :Int) extends CommCCTrait
 
 /**
  * Case class for data from file like "X-Y. Задачи-Код Z.xlsx"
@@ -121,11 +110,9 @@ case class TaskCode(filename :String, np_name:String,
                     percent_impact :String,
                     fp_id :String,
                     targetIndicId :String,
-                    taskId :String
-                   )
-  extends CommCCTrait {
-  override def getFileName :String = filename
-}
+                    taskId :String,
+                    RowNum :Int
+                   ) extends CommCCTrait
 
 /**
  * Case class for data from file like "X-Y. Задачи.xlsx"
@@ -140,11 +127,9 @@ case class Tasks(filename :String, np_name:String,
                  impl_period: String,
                  fp_name: String,
                  decree: String,
-                 code_name: String
-                )
-  extends CommCCTrait {
-  override def getFileName :String = filename
-}
+                 code_name: String,
+                 RowNum :Int
+                ) extends CommCCTrait
 
 /**
  * Case class for data from file like "X-Y. Орган управления.xlsx"
@@ -167,11 +152,9 @@ case class Government(filename :String, np_name:String,
                       role_in_team_syscode: String,
                       user_fio_posit: String,
                       id: String,
-                      percent_partic: String
-                     )
-  extends CommCCTrait {
-  override def getFileName :String = filename
-}
+                      percent_partic: String,
+                      RowNum :Int
+                     ) extends CommCCTrait
 
 /**
  * Case class for data from file like "Дополнительная информация.xlsx"
@@ -180,11 +163,9 @@ case class AdditInfo(filename :String, np_name:String,
                      s_name :String,
                      npp :String,
                      section :String,
-                     add_info :String
-                    )
-  extends CommCCTrait {
-  override def getFileName :String = filename
-}
+                     add_info :String,
+                     RowNum :Int
+                    ) extends CommCCTrait
 
 case class Results(filename :String, np_name:String,
                    fp_name: String,
@@ -201,10 +182,9 @@ case class Results(filename :String, np_name:String,
                    task_id: String,
                    is_money: String,
                    realize_regions: String,
-                   without_fb: String)
-  extends CommCCTrait {
-  override def getFileName :String = filename
-}
+                   without_fb: String,
+                   RowNum :Int
+                  ) extends CommCCTrait
 
 case class AssessmentTaskIndic(filename :String, np_name:String,
                                cell_num :Int,
@@ -212,10 +192,7 @@ case class AssessmentTaskIndic(filename :String, np_name:String,
                                row_num :Int,
                                left_header_name :String,
                                cell_value :String
-                              )
-  extends CommCCTrait {
-  override def getFileName :String = filename
-}
+                              ) extends CommCCTrait
 
 /**
  * Case class for data from file like  X. Финансовое обеспечение-ФБ.xlsx
@@ -249,11 +226,8 @@ case class FinancialProvision(filename :String, np_name:String,
                               locked_elbo_2021 :String,
                               brought_pno_2021 :String,
                               pno_wconditions_2021 :String,
-                              sbt_row_type :String)
-  extends CommCCTrait {
-  override def getFileName :String = filename
-}
-
+                              sbt_row_type :String,
+                              RowNum :Int) extends CommCCTrait
 
 /**
  * Case class for data from file like  X. Методика расчета показателей.xlsx
@@ -268,10 +242,8 @@ case class MethodCalc(filename :String, np_name:String,
                       asses_period: String,
                       provision_date: String,
                       methodcalc_id: String,
-                      descr: String)
-  extends CommCCTrait {
-  override def getFileName :String = filename
-}
+                      descr: String,
+                      RowNum :Int) extends CommCCTrait
 
 /**
  * Case class for data from file like  X. Методика расчета показателей-Код 3.xlsx
@@ -286,28 +258,26 @@ case class MethodCalcCode(filename :String, np_name:String,
                           agr_level: String,
                           asses_period: String,
                           provision_date: String,
-                          var_description: String
-                         )
-  extends CommCCTrait {
-  override def getFileName :String = filename
-}
-
-
+                          var_description: String,
+                          RowNum :Int
+                         ) extends CommCCTrait
 
 
 object CommonCCStructs {
 
+  //todo: replace deprecated method
   private implicit def getCellasStr(c :Cell): String  =
     try {
-      c.getCellTypeEnum match {
+      c.getCellType match {
         case CellType.STRING => c.getStringCellValue
         case CellType.NUMERIC => c.getNumericCellValue.toString
         case CellType.BOOLEAN => " " //c.getBooleanCellValue.toString
         case CellType.BLANK => " " //null
+        case _ => " "
       }
     } catch {
-      case e: Throwable => throw new CustomException(msg = s"EXCEPTION [getCellasStr] getCellTypeEnum = " + c.getCellTypeEnum+" "+e.getMessage)
-      case e :NullPointerException =>  throw new CustomException(msg = s"EXCEPTION [getCellasStr] getCellTypeEnum = " + c.getCellTypeEnum+" "+e.getMessage)
+      case e: Throwable => throw new CustomException(msg = s"EXCEPTION [getCellasStr] getCellTypeEnum = " + c.getCellType+" "+e.getMessage)
+      case e :NullPointerException =>  throw new CustomException(msg = s"EXCEPTION [getCellasStr] getCellTypeEnum = " + c.getCellType+" "+e.getMessage)
     }
 
 
@@ -316,9 +286,6 @@ object CommonCCStructs {
    * Parse XLSX row of Data into InterestedFoiv
    */
   private def cellToTargetIndic(filename: String, np_name: String, row: Row): TargetIndic = {
-    //println("getRowNum = "+row.getRowNum)
-    //println("  base_value = "+" celltype="+row.getCell(9).getCellTypeEnum())
-    //val cell_0 = row.getCell(0)
     /**
      *  Here we use implicit conversion from Cell Type of different CellType.X into String with  - getCellasStr
     */
@@ -358,7 +325,8 @@ object CommonCCStructs {
       row.getCell(31),
       row.getCell(32),
       row.getCell(33),
-      row.getCell(34)
+      row.getCell(34),
+      row.getRowNum
     )
   }
 
@@ -374,7 +342,8 @@ object CommonCCStructs {
       row.getCell(6),
       row.getCell(7),
       row.getCell(8),
-      row.getCell(9)
+      row.getCell(9),
+      row.getRowNum
     )
 
   private def cellToTargetIndicCode(filename: String, np_name: String, row: Row): TargetIndicCode =
@@ -390,7 +359,8 @@ object CommonCCStructs {
       row.getCell(7),
       row.getCell(8),
       row.getCell(9),
-      row.getCell(10)
+      row.getCell(10),
+      row.getRowNum
     )
 
   private def cellToTaskCode(filename: String, np_name: String, row: Row) :TaskCode =
@@ -401,11 +371,11 @@ object CommonCCStructs {
       row.getCell(2),
       row.getCell(3),
       row.getCell(4),
-      row.getCell(5)
+      row.getCell(5),
+      row.getRowNum
     )
 
   private def cellToFinProvis(filename: String, np_name: String, row: Row) :FinancialProvision = //{
-    //try {
       FinancialProvision(
         filename, np_name,
         row.getCell(0),
@@ -437,17 +407,9 @@ object CommonCCStructs {
         row.getCell(23),
         row.getCell(24),
         //
-        row.getCell(25) //Тип строки СБР
+        row.getCell(25), //Тип строки СБР
+        row.getRowNum
       )
-    /*
-    } catch {
-      case e: Throwable => throw
-        new CustomException(msg = s"EXCEPTION [cellToFinProvis] RowNum = ${row.getRowNum} c11=${row.getCell(11)} c12=${row.getCell(12)} c13=${row.getCell(13)}")
-      case e: NullPointerException => throw new CustomException(msg = s"EXCEPTION [cellToFinProvis] getRowNum = " + row.getRowNum)
-    }
-  */
-
-
 
   /**
    * Parse XLSX row of Data into Seq of case class
@@ -458,7 +420,8 @@ object CommonCCStructs {
       filename, np_name,
       row.getCell(0).getStringCellValue,
       row.getCell(1).getStringCellValue,
-      row.getCell(2).getStringCellValue
+      row.getCell(2).getStringCellValue,
+      row.getRowNum
     )
 
   /**
@@ -470,7 +433,8 @@ object CommonCCStructs {
         np_name,
         row.getCell(0).getStringCellValue,
         row.getCell(1).getStringCellValue,
-        row.getCell(2).getStringCellValue
+        row.getCell(2).getStringCellValue,
+        row.getRowNum
       )
 
   private def cellsToMethodCalc(filename: String, np_name: String, row: Row) :MethodCalc =
@@ -485,7 +449,8 @@ object CommonCCStructs {
       row.getCell(6),
       row.getCell(7),
       row.getCell(8),
-      row.getCell(9)
+      row.getCell(9),
+      row.getRowNum
     )
 
   private def cellsToMethodCalcCode(filename: String, np_name: String, row: Row) :MethodCalcCode =
@@ -500,7 +465,8 @@ object CommonCCStructs {
       row.getCell(6),
       row.getCell(7),
       row.getCell(8),
-      row.getCell(9)
+      row.getCell(9),
+      row.getRowNum
     )
 
   private def cellsToTasks(filename: String, np_name: String, row: Row) :Tasks =
@@ -515,7 +481,8 @@ object CommonCCStructs {
       row.getCell(6),
       row.getCell(7),
       row.getCell(8),
-      row.getCell(9)
+      row.getCell(9),
+      row.getRowNum
     )
 
   private def cellsToGovernment(filename: String, np_name: String, row: Row) :Government =
@@ -538,7 +505,8 @@ object CommonCCStructs {
       row.getCell(14),
       row.getCell(15),
       row.getCell(16),
-      row.getCell(17)
+      row.getCell(17),
+      row.getRowNum
     )
 
   private def cellsToAdditInfo(filename: String, np_name: String, row: Row) =
@@ -547,7 +515,8 @@ object CommonCCStructs {
       row.getCell(0),
       row.getCell(1),
       row.getCell(2),
-      row.getCell(3)
+      row.getCell(3),
+      row.getRowNum
     )
 
   private def cellsToResults(filename: String, np_name: String, row: Row) =
@@ -567,7 +536,8 @@ object CommonCCStructs {
       row.getCell(12),
       row.getCell(13),
       row.getCell(14),
-      row.getCell(15)
+      row.getCell(15),
+      row.getRowNum
     )
 
   /**
@@ -656,15 +626,17 @@ object CommonCCStructs {
   */
   def rowsToSeqAssessmentTaskIndic(filename :String, np_name:String, rowIter :Iterator[Row]) :Seq[AssessmentTaskIndic] = {
     //Contains first row, first next() return first row
-    val iterHeaderCells :List[(Cell,Int)] =  rowIter.next().cellIterator().asScala.iterator.zipWithIndex.toList
-
+    val iterHeaderCells :List[(Cell,Int)] =  rowIter.next.cellIterator.asScala.iterator.zipWithIndex.toList
     //iteration by any rows, excluding header
     val seq :Seq[AssessmentTaskIndic] =
       rowIter.flatMap(currDataRow =>
-        iterHeaderCells.map(currCell => AssessmentTaskIndic(filename, np_name, currCell._2, currCell._1,
-          currDataRow.getRowNum, currDataRow.getCell(0), currDataRow.getCell(currCell._2))
-        )).toSeq.filter(elm => (elm.left_header_name != "0.0" && elm.top_header_name != "0.0")) //todo: empty row,cell!
-
+        iterHeaderCells.map(currCell =>
+          AssessmentTaskIndic(filename, np_name,
+            currCell._2, currCell._1, currDataRow.getRowNum, currDataRow.getCell(0), currDataRow.getCell(currCell._2)
+          )
+        )).toSeq
+        .filterNot(elm => elm.left_header_name == "0.0" && elm.top_header_name == "0.0")
+      //todo: External tool used for upload data into xlsx files produce hidden empty last row and last column.
     seq
   }
 

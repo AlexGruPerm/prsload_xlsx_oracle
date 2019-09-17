@@ -18,7 +18,7 @@ class ParsersLoaders(files :Seq[FileNode], conn :Connection) {
    * For this purpose we use Function.tupled that change 3 input parameters into one parameter of type Tuple3.
    */
   def fnToParserParams(fn :FileNode) : (String, String, Iterator[Row]) =
-    (fn.absName, fn.parentAbsName, WorkbookFactory.create(fn.fFile).getSheetAt(0).iterator().asScala.iterator)
+    (fn.absName, fn.parentAbsName, WorkbookFactory.create(fn.fFile).getSheetAt(0).iterator.asScala)
 
   private def ParseCoex(fn :FileNode) :Seq[CoExecutor] =
     Function.tupled(rowsToSeqCoExecutor _)(fnToParserParams(fn))
@@ -96,17 +96,13 @@ class ParsersLoaders(files :Seq[FileNode], conn :Connection) {
        val tBegin = System.currentTimeMillis
        val foundFiles = files.filter(_.absName.contains(entityName))
          //.filter(fn => !fn.parentAbsName.contains("Цифровая экономика"))
-         //.filter(fn => fn.parentAbsName.contains("Здравоохранение"))
+         //.filter(fn => fn.parentAbsName.contains("Культура"))
          //.filter(fn => fn.parentAbsName.contains("Транспортная часть комплексного"))
          .filter(fn => fn.absName.contains(entityName))
          .filter(fn => additionFilter match {  //Additional filter - using if exists (no None)
            case Some(s) => fn.absName.contains(s)
            case None => true
          })
-       /**
-        * Output file names for debug purpose.
-        */
-       foundFiles.foreach(f => log.info(f.absName))
 
        log.info(s"$entityName :${foundFiles.size} files")
        val seqEntity :Seq[T] = foundFiles.flatMap(parseFunc)
@@ -122,19 +118,19 @@ class ParsersLoaders(files :Seq[FileNode], conn :Connection) {
     }
 
     val seqLoads :Seq[FileLoadMeta[_ <: CommCCTrait]] = Seq(
-      FileLoadMeta[CoExecutor]("Соисполнители", 0, ParseCoex, saveCoExecutors),
-      FileLoadMeta[InterestedFoiv]("Заинтересованные ФОИВ", 0, ParseInteresFoiv, saveInterestedFoiv),
-      FileLoadMeta[TargetIndic]("Цели и показатели.xlsx", 0, ParseTargetIndic, saveTargetIndic),
-      FileLoadMeta[ProjStruct]("Структура проекта.xlsx", 0, ParsePrjStruct, saveProjStruct),
-      FileLoadMeta[TargetIndicCode]("Цели и показатели-Код", 0, ParseTargetIndicCode, saveTargetIndicCode),
-      FileLoadMeta[TaskCode]("Задачи-Код", 0, ParseTaskCode, saveTaskCode),
-      FileLoadMeta[FinancialProvision]("Финансовое обеспечение-ФБ", 0, ParseFinProvis, saveFinProvis),
-      FileLoadMeta[MethodCalc]("Методика расчета показателей.xlsx", 0, ParseMethodCalc, saveMethodCalc),
-      FileLoadMeta[MethodCalcCode]("Методика расчета показателей-Код", 0, ParseMethodCalcCode, saveMethodCalcCode),
-      FileLoadMeta[Tasks]("Задачи.xlsx", 0, ParseTasks, saveTasks),
-      FileLoadMeta[Government]("Орган управления.xlsx", 0, ParseGovernment, saveGovernment),
-      FileLoadMeta[AdditInfo]("Дополнительная информация.xlsx", 0, ParseAdditInfo, saveAdditInfo),
-      FileLoadMeta[Results]("Результаты", 0, ParseResults, saveResults, Some(").xlsx")),
+      FileLoadMeta[CoExecutor]("Соисполнители", 1, ParseCoex, saveCoExecutors),
+      FileLoadMeta[InterestedFoiv]("Заинтересованные ФОИВ", 1, ParseInteresFoiv, saveInterestedFoiv),
+      FileLoadMeta[TargetIndic]("Цели и показатели.xlsx", 1, ParseTargetIndic, saveTargetIndic),
+      FileLoadMeta[ProjStruct]("Структура проекта.xlsx", 1, ParsePrjStruct, saveProjStruct),
+      FileLoadMeta[TargetIndicCode]("Цели и показатели-Код", 1, ParseTargetIndicCode, saveTargetIndicCode),
+      FileLoadMeta[TaskCode]("Задачи-Код", 1, ParseTaskCode, saveTaskCode),
+      FileLoadMeta[FinancialProvision]("Финансовое обеспечение-ФБ", 1, ParseFinProvis, saveFinProvis),
+      FileLoadMeta[MethodCalc]("Методика расчета показателей.xlsx", 1, ParseMethodCalc, saveMethodCalc),
+      FileLoadMeta[MethodCalcCode]("Методика расчета показателей-Код", 1, ParseMethodCalcCode, saveMethodCalcCode),
+      FileLoadMeta[Tasks]("Задачи.xlsx", 1, ParseTasks, saveTasks),
+      FileLoadMeta[Government]("Орган управления.xlsx", 1, ParseGovernment, saveGovernment),
+      FileLoadMeta[AdditInfo]("Дополнительная информация.xlsx", 1, ParseAdditInfo, saveAdditInfo),
+      FileLoadMeta[Results]("Результаты", 1, ParseResults, saveResults, Some(").xlsx")),
       FileLoadMeta[AssessmentTaskIndic]("Оценка обеспеченности целей и целевых показателей национального проекта.xlsx", 1, ParseAssessmentTaskIndic, saveAssessmentTaskIndic)
     )
 

@@ -59,6 +59,9 @@ class ParsersLoaders(files :Seq[FileNode], conn :Connection) {
   private def ParseGovernment(fn :FileNode) :Seq[Government] =
     Function.tupled(rowsToSeqGovernment _)(fnToParserParams(fn))
 
+  private def ParseNPDict(fn :FileNode) :Seq[NPDict] =
+    Function.tupled(rowsToSeqNPDict _)(fnToParserParams(fn))
+
   private def ParseAdditInfo(fn :FileNode) :Seq[AdditInfo] =
     Function.tupled(rowsToSeqAdditInfo _)(fnToParserParams(fn))
 
@@ -118,7 +121,9 @@ class ParsersLoaders(files :Seq[FileNode], conn :Connection) {
      }
     }
 
+    //todo: maybe add target table here
     val seqLoads :Seq[FileLoadMeta[_ <: CommCCTrait]] = Seq(
+      FileLoadMeta[NPDict]("Национальные проекты.xlsx", 0, ParseNPDict, saveNPDict),
       FileLoadMeta[CoExecutor]("Соисполнители", 0, ParseCoex, saveCoExecutors),
       FileLoadMeta[InterestedFoiv]("Заинтересованные ФОИВ", 0, ParseInteresFoiv, saveInterestedFoiv),
       FileLoadMeta[TargetIndic]("Цели и показатели.xlsx", 0, ParseTargetIndic, saveTargetIndic),
@@ -126,11 +131,11 @@ class ParsersLoaders(files :Seq[FileNode], conn :Connection) {
       FileLoadMeta[ProjStruct]("Структура проекта.xlsx", 0, ParsePrjStruct, saveProjStruct),
       FileLoadMeta[Tasks]("Задачи.xlsx", 0, ParseTasks, saveTasks),
       FileLoadMeta[TaskCode]("Задачи-Код", 0, ParseTaskCode, saveTaskCode),
-      FileLoadMeta[Results]("Результаты", 0, ParseResults, saveResults, Some(").xlsx")),
+      //todo: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      FileLoadMeta[Results]("Результаты", 1, ParseResults, saveResults, Some(").xlsx")),
       FileLoadMeta[FinancialProvision]("Финансовое обеспечение-ФБ", 0, ParseFinProvis, saveFinProvis),
-      //next 2 files loading into DB with column names as in file header.
       FileLoadMeta[FinancialProvisionMonitor]("Финансовое обеспечение-Мониторинг исполнения ФБ.xlsx", 0, ParseFinProvisMonitor, saveFinProvisMonitor),
-      FileLoadMeta[FinancialProvisionVolume]("Финансовое обеспечение-Объем финансового обеспечения НП.xlsx", 1, ParseFinProvisVolume, saveFinProvisVolume),
+      FileLoadMeta[FinancialProvisionVolume]("Финансовое обеспечение-Объем финансового обеспечения НП.xlsx", 0, ParseFinProvisVolume, saveFinProvisVolume),
       FileLoadMeta[AdditInfo]("Дополнительная информация.xlsx", 0, ParseAdditInfo, saveAdditInfo),
       FileLoadMeta[MethodCalc]("Методика расчета показателей.xlsx", 0, ParseMethodCalc, saveMethodCalc),
       FileLoadMeta[MethodCalcCode]("Методика расчета показателей-Код", 0, ParseMethodCalcCode, saveMethodCalcCode),

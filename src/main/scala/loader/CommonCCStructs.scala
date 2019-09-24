@@ -28,7 +28,7 @@ case class TargetIndic(filename :String, np_name:String,
                        npp  :String,         // № п/п
                        code :String,         // Код
                        noDopInidc :String ,  // Отсутствуют доп.показатели
-                       project_vers :String, // Версия проекта.Идентификатор
+                       project_vers :Double, // Версия проекта.Идентификатор
                        npp_useless :String,  // № п/п (не исп)
                        ti_type :String,       // Тип
                        indic_name :String, //Наименование показателя
@@ -43,13 +43,13 @@ case class TargetIndic(filename :String, np_name:String,
                        del_val_2022 :String,//
                        del_val_2023 :String,//
                        del_val_2024 :String,//
-                       val_2018: String, //
-                       val_2019: String, //
-                       val_2020: String, //
-                       val_2021: String, //
-                       val_2022: String, //
-                       val_2023: String, //
-                       val_2024: String, //
+                       val_2018: Double, //
+                       val_2019: Double, //
+                       val_2020: Double, //
+                       val_2021: Double, //
+                       val_2022: Double, //
+                       val_2023: Double, //
+                       val_2024: Double, //
                        //---------------
                        target_value: String, //Целевое значение
                        control_level: String, //Уровень контроля
@@ -57,7 +57,7 @@ case class TargetIndic(filename :String, np_name:String,
                        description: String, //Описание
                        way_achiv_indic: String, // Ход достижения показателя
                        predict_achiv_date: String, // Оценка сроков достижения целевого значения показателя
-                       ident: String, // Идентификатор
+                       ident: Double, // Идентификатор
                        decree: String, //Указ
                        num: String, //Индекс номера
                        is_using_in_fp: String, //Используется в ФП
@@ -92,14 +92,14 @@ case class TargetIndicCode(filename :String, np_name:String,
                            ww_np: String,
                            measure: String, //Единица измерения
                            vtype: String,
-                           val_2018: String,
-                           val_2019: String,
-                           val_2020: String,
-                           val_2021: String,
-                           val_2022: String,
-                           val_2023: String,
-                           val_2024: String,
-                           targetIndicId: String,
+                           val_2018: Double,
+                           val_2019: Double,
+                           val_2020: Double,
+                           val_2021: Double,
+                           val_2022: Double,
+                           val_2023: Double,
+                           val_2024: Double,
+                           targetIndicId: Double,
                            RowNum :Int) extends CommCCTrait
 
 /**
@@ -131,6 +131,23 @@ case class Tasks(filename :String, np_name:String,
                  code_name: String,
                  RowNum :Int
                 ) extends CommCCTrait
+
+/**
+ *
+*/
+case class NPDict(
+                   code: String,
+                   np_name: String,
+                   prj_curator: String,
+                   prj_supervisor: String,
+                   prj_admin: String,
+                   current_etap: String,
+                   status: String,
+                   status_no_actual: String,
+                   stage: String,
+                   impl_period_from: String,
+                   impl_period_to: String
+                 ) extends CommCCTrait
 
 /**
  * Case class for data from file like "X-Y. Орган управления.xlsx"
@@ -168,7 +185,8 @@ case class AdditInfo(filename :String, np_name:String,
                      RowNum :Int
                     ) extends CommCCTrait
 
-case class Results(filename :String, np_name:String,
+case class Results(filename :String,
+                   np_name:String,
                    fp_name: String,
                    task_of_np: String,
                    code: String,
@@ -179,12 +197,13 @@ case class Results(filename :String, np_name:String,
                    control_level: String,
                    value: String,
                    achiev_date: String,
-                   task_vers_proj_id: String,
+                   task_vers_proj_bc_id: String,
+                   task_parent_id: String,
                    task_id: String,
                    is_money: String,
                    realize_regions: String,
                    without_fb: String,
-                   RowNum :Int
+                   RowNum: Int
                   ) extends CommCCTrait
 
 case class AssessmentTaskIndic(filename :String, np_name:String,
@@ -289,7 +308,66 @@ case class FinancialProvisionMonitor(filename :String,
                                     ) extends CommCCTrait
 
 
-case class FinancialProvisionVolume( filename :String, np_name:String,
+case class FinancialProvisionVolume(
+                                     filename: String,
+                                     np_name: String,
+                                     //--
+                                     proj_name: String,
+                                     del_proj_name: String,
+                                     fin_src: String,
+                                     //--
+                                     passport_2018_year: Double,
+                                     passport_2018: Double,
+                                     vz_2018: Double,
+                                     budget_2018: Double,
+                                     diff_2018: Double,
+                                     //--
+                                     passport_2019: Double,
+                                     vz_2019: Double,
+                                     basic_ba_2019: Double,
+                                     law_approve_2019: Double,
+                                     sbr_2019: Double,
+                                     diff_2019: Double,
+                                     //--
+                                     passport_2020: Double,
+                                     vz_2020: Double,
+                                     basic_ba_2020: Double,
+                                     law_approve_2020: Double,
+                                     sbr_2020: Double,
+                                     diff_2020: Double,
+                                     //--
+                                     passport_2021: Double,
+                                     vz_2021: Double,
+                                     basic_ba_2021: Double,
+                                     law_approve_2021: Double,
+                                     sbr_2021: Double,
+                                     diff_2021: Double,
+                                     //--
+                                     passport_2022: Double,
+                                     vz_2022: Double,
+                                     budget_2022: Double,
+                                     diff_2022: Double,
+                                     //--
+                                     passport_2023: Double,
+                                     vz_2023: Double,
+                                     budget_2023: Double,
+                                     diff_2023: Double,
+                                     //--
+                                     passport_2024: Double,
+                                     vz_2024: Double,
+                                     budget_2024: Double,
+                                     diff_2024: Double,
+                                     //--
+                                     link_prj_vers_bc_code_id: String,
+                                     fin_src_2: String,
+                                     hack_filter: String,
+                                     spend_area_name: String,
+                                     prj_code: String,
+                                     prj_code_bc: String,
+                                     link_prj_vers_id: String,
+                                     rn: Int
+
+                                   /*
                                      A :String,
                                      B :String,
                                      C :String,
@@ -336,6 +414,7 @@ case class FinancialProvisionVolume( filename :String, np_name:String,
                                      AR :String,
                                      ASCOL :String,
                                      RowNum :Int
+                                   */
                                    ) extends CommCCTrait
 
 /**
@@ -433,6 +512,29 @@ object CommonCCStructs {
       }
     }
 
+
+  private implicit def getCellasDouble(c: Cell) :Double =
+    try {
+      c.getCellType match {
+        case CellType.STRING => c.getStringCellValue.toDouble
+        case CellType.NUMERIC => c.getNumericCellValue
+        case CellType.BOOLEAN => null.asInstanceOf[Double] //c.getBooleanCellValue.toString
+        case CellType.BLANK => null.asInstanceOf[Double] //null
+        case _ => null.asInstanceOf[Double]
+      }
+    } catch {
+      case e: Throwable => try {
+        c.getCellType match {
+          case CellType.STRING => null.asInstanceOf[Double]
+          case CellType.NUMERIC => null.asInstanceOf[Double]
+          case _ => null.asInstanceOf[Double]
+        }
+      } catch {
+        case e: Throwable => null.asInstanceOf[Double]
+        //throw new CustomException(msg = s"EXCEPTION [getCellasStr] getCellTypeEnum = " + c.getCellType + " " + e.getMessage)
+        //case e: NullPointerException => throw new CustomException(msg = s"EXCEPTION [getCellasStr] getCellTypeEnum = " + c.getCellType + " " + e.getMessage)
+      }
+    }
 
   /**
    * Parse XLSX row of Data into InterestedFoiv
@@ -533,11 +635,13 @@ object CommonCCStructs {
       row.getCell(0),
       row.getCell(1),
       row.getCell(2),
+      //2018
       row.getCell(3),
       row.getCell(4),
       row.getCell(5),
       row.getCell(6),
       row.getCell(7),
+      //2019
       row.getCell(8),
       row.getCell(9),
       row.getCell(10),
@@ -779,6 +883,21 @@ object CommonCCStructs {
       row.getRowNum
     )
 
+  private def cellsToNPDict(filename: String, np_name: String, row: Row) :NPDict =
+    NPDict(
+      row.getCell(0),//code
+      row.getCell(1),//np_name
+      row.getCell(2),//prj_curator
+      row.getCell(3),//prj_supervisor
+      row.getCell(4),//prj_admin
+      row.getCell(5),//current_etap
+      row.getCell(6),//status
+      row.getCell(8),//status_no_actual
+      row.getCell(9),//stage
+      row.getCell(10),//impl_period_from
+      row.getCell(11)//impl_period_to
+    )
+
   private def cellsToGovernment(filename: String, np_name: String, row: Row) :Government =
     Government(
       filename, np_name,
@@ -816,6 +935,7 @@ object CommonCCStructs {
   private def cellsToResults(filename: String, np_name: String, row: Row) =
     Results(
       filename, np_name,
+      row.getCell(0),
       row.getCell(1),
       row.getCell(2),
       row.getCell(3),
@@ -916,6 +1036,11 @@ object CommonCCStructs {
   def rowsToSeqGovernment(filename :String, np_name:String, rowIter :Iterator[Row]) :Seq[Government] = {
     movePointer(rowIter,1)
     rowIter.map(r => cellsToGovernment(filename,np_name,r)).toSeq
+  }
+
+  def rowsToSeqNPDict(filename :String, np_name:String, rowIter :Iterator[Row]) :Seq[NPDict] = {
+    movePointer(rowIter,5)
+    rowIter.map(r => cellsToNPDict(filename,np_name,r)).toSeq
   }
 
   def rowsToSeqAdditInfo(filename :String, np_name:String, rowIter :Iterator[Row]) :Seq[AdditInfo] = {

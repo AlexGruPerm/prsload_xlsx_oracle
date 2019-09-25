@@ -131,8 +131,7 @@ class ParsersLoaders(files :Seq[FileNode], conn :Connection) {
       FileLoadMeta[ProjStruct]("Структура проекта.xlsx", 0, ParsePrjStruct, saveProjStruct),
       FileLoadMeta[Tasks]("Задачи.xlsx", 0, ParseTasks, saveTasks),
       FileLoadMeta[TaskCode]("Задачи-Код", 0, ParseTaskCode, saveTaskCode),
-      //todo: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      FileLoadMeta[Results]("Результаты", 1, ParseResults, saveResults, Some(").xlsx")),
+      FileLoadMeta[Results]("Результаты", 0, ParseResults, saveResults, Some(").xlsx")),
       FileLoadMeta[FinancialProvision]("Финансовое обеспечение-ФБ", 0, ParseFinProvis, saveFinProvis),
       FileLoadMeta[FinancialProvisionMonitor]("Финансовое обеспечение-Мониторинг исполнения ФБ.xlsx", 0, ParseFinProvisMonitor, saveFinProvisMonitor),
       FileLoadMeta[FinancialProvisionVolume]("Финансовое обеспечение-Объем финансового обеспечения НП.xlsx", 0, ParseFinProvisVolume, saveFinProvisVolume),

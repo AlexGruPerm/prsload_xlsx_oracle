@@ -87,7 +87,7 @@ val fpAndThen = pfLess7 andThen pfMore4
 //(1 to 10).toList collect pfLess7.lift
 //Error. because collect wait partial function and not plain function, try map
 
-(1 to 10).toList map pfLess7.lift
+(1 to 10).toList map pfLess7
 //List(Some(10), Some(20), Some(30), Some(40), Some(50), Some(60), Some(70), None, None, None)
 
 //to eliminate Nones we can use flatten or flatMap

@@ -7,20 +7,6 @@ case class Person(name: String, car :Car, country :Country){
     s"$name - $country -  $car"
 }
 
-type pfPP = PartialFunction[Person,Person]
-
-val pfCarFilter :pfPP ={
-  case p if p.car.year==2013 => p
-}
-
-val pfCountryFilter :pfPP ={
-  case p if p.country.name=="russia" => p
-}
-
-val pfPersonNameFilter :pfPP = {
-  case p if p.name.startsWith("J") => p
-}
-
 val listpers :Seq[Person] = Seq(
   Person("John",Car("mers",2013),Country("russia")),
   Person("Mark",Car("mers",2013),Country("usa")),
@@ -32,16 +18,38 @@ val listpers :Seq[Person] = Seq(
   Person("Jastin",Car("mers",2013),Country("usa"))
 )
 
+type pfPP = PartialFunction[Person,Person]
+
+val pfCarFilter :pfPP ={
+  case p if p.car.year==2013 => p
+}
+val pfCountryFilter :pfPP ={
+  case p if p.country.name=="russia" => p
+}
+val pfPersonNameFilter :pfPP = {
+  case p if p.name.startsWith("J") => p
+}
+
+/** Applies this partial function to the given argument when it is contained in the function domain.
+ *  Applies fallback function where this partial function is not defined.
+ */
+listpers.collect(pfCountryFilter)
+
+/*
 //manual chaining
 val commonFilter = pfPersonNameFilter andThen pfCountryFilter andThen pfCarFilter
 listpers collect commonFilter map println
+*/
 
-//fold filers seq in chain
+
+/*
 val seqPfF :Seq[pfPP] = Seq(pfPersonNameFilter, pfCountryFilter, pfCarFilter)
 val combFilters = seqPfF.tail.foldLeft(seqPfF.head)(_ andThen _)
 
 listpers collect combFilters map println
+*/
 
+/*
 //================= OPTIMIZATION OF FILTERING DATA =======================
 //create big seq of Persons with random data.
 
@@ -107,6 +115,6 @@ val fastFilterComb = pfCountryFilter andThen pfPersonNameFilter
 val resFast :Seq[Person] = SortedSeqPers collect fastFilterComb
 println(s"fast filtering size=${resFast.size} duration = ${System.currentTimeMillis()-t1Fast}")
 
-
+*/
 
 
